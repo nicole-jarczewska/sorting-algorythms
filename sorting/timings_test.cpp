@@ -39,9 +39,8 @@ class TimingsCollector {
             std::cerr << "Failed to open file: " << filepath << std::endl;
             return false;
         }
-        file << "N;milliseconds\n";
         for (const auto& entry : timings)
-            file << entry.N << ";" << entry.ms << "\n";
+            file << entry.ms << "\n";
         return true;
     }
 
