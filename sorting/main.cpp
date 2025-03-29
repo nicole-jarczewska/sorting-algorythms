@@ -20,33 +20,21 @@
 #include "timings_test.hpp"
 
 void time_check(int size, float sort_percentage){
-    int* tab = new int[size];
-    int* tab_heap = new int[size];
-    int* tab_tim = new int[size];
-    int* tab_intro = new int[size];
+    auto tab = std::make_unique<std::vector<int>>(size);
 
     for (int i = 0; i < size; i++) {
-        tab[i] = std::rand() % 10000; //filling the table with random values
+        (*tab)[i] = std::rand() % 10000;
     }
 
-    if(sort_percentage != 0)
-    std::sort(tab, tab + int(sort_percentage*size));
-
-    std::copy(tab, tab + size, tab_heap);
-    std::copy(tab, tab + size, tab_tim);
-    std::copy(tab, tab + size, tab_intro); //creating an identical table for every sorting algorythm for accurate results
+    if (sort_percentage > 0)
+        std::sort(tab->begin(), tab->begin() + int(sort_percentage * size));
 
     std::ostringstream filename;
     filename << size << "_" << std::fixed << std::setprecision(3) << sort_percentage << ".csv";
 
-    measure_sorting_timings(tab_heap, size, heapsort, "results/heapsort_" + filename.str());
-    measure_sorting_timings(tab_tim, size, timsort, "results/timsort_" + filename.str() );
-    measure_sorting_timings(tab_intro, size, introsort, "results/introsort_" + filename.str());
-
-    delete[] tab;
-    delete[] tab_heap;
-    delete[] tab_tim;
-    delete[] tab_intro;
+    measure_sorting_timings(tab->data(), size, heapsort, "results/heapsort_" + filename.str());
+    measure_sorting_timings(tab->data(), size, timsort, "results/timsort_" + filename.str());
+    measure_sorting_timings(tab->data(), size, introsort, "results/introsort_" + filename.str());
 }
 
 int main() {
