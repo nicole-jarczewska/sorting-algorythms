@@ -1,4 +1,4 @@
-﻿#include <stdlib.h>
+#include <stdlib.h>
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
@@ -19,7 +19,7 @@
 #include "timings_test.cpp"
 #include "timings_test.hpp"
 
-void time_check(int size){
+void time_check(int size, float sort_percentage){
     int* tab = new int[size];
     int* tab_heap = new int[size];
     int* tab_tim = new int[size];
@@ -29,13 +29,19 @@ void time_check(int size){
         tab[i] = std::rand() % 10000; //filling the table with random values
     }
 
+    if(sort_percentage != 0)
+    std::sort(tab, tab + int(sort_percentage*size));
+
     std::copy(tab, tab + size, tab_heap);
     std::copy(tab, tab + size, tab_tim);
     std::copy(tab, tab + size, tab_intro); //creating an identical table for every sorting algorythm for accurate results
 
-    measure_sorting_timings(tab_heap, size, heapsort, "heapsort_" + std::to_string(size) + ".csv");
-    measure_sorting_timings(tab_tim, size, timsort, "timsort_" + std::to_string(size) + ".csv");
-    measure_sorting_timings(tab_intro, size, introsort, "introsort_" + std::to_string(size) + ".csv");
+    std::ostringstream filename;
+    filename << size << "_" << std::fixed << std::setprecision(3) << sort_percentage << ".csv";
+
+    measure_sorting_timings(tab_heap, size, heapsort, "results/heapsort_" + filename.str());
+    measure_sorting_timings(tab_tim, size, timsort, "results/timsort_" + filename.str() );
+    measure_sorting_timings(tab_intro, size, introsort, "results/introsort_" + filename.str());
 
     delete[] tab;
     delete[] tab_heap;
@@ -45,9 +51,12 @@ void time_check(int size){
 
 int main() {
     const int SIZES[] = {1000, 2000, 5000, 10000, 50000, 100000, 500000, 1000000}; //sizes for the tables
+    const float SORT_PERCENTAGE[] = {0, 0.25, 0.50, 0.75, 0.95, 0.99, 0.997, 1}; //percantage of the table that is sorted
     
     for(int size : SIZES){
-        time_check(size);
+        for(float sort_percentage : SORT_PERCENTAGE){
+            time_check(size, sort_percentage);
+        }
     }
 
     return 0;
