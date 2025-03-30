@@ -18,6 +18,8 @@
 
 #include "timings_test.cpp"
 #include "timings_test.hpp"
+#include "test.cpp"
+#include "test.hpp"
 
 void time_check(int size, float sort_percentage){
     auto tab = std::make_unique<std::vector<int>>(size);
@@ -25,8 +27,9 @@ void time_check(int size, float sort_percentage){
     for (int i = 0; i < size; i++) {
         (*tab)[i] = std::rand() % 10000;
     }
-
-    if (sort_percentage > 0)
+    if(sort_percentage == 2)
+        std::sort(tab->begin(), tab->begin() + size, std::greater<int>());
+    else if (sort_percentage > 0)
         std::sort(tab->begin(), tab->begin() + int(sort_percentage * size));
 
     std::ostringstream filename;
@@ -39,13 +42,17 @@ void time_check(int size, float sort_percentage){
 
 int main() {
     const int SIZES[] = {1000, 2000, 5000, 10000, 50000, 100000, 500000, 1000000}; //sizes for the tables
-    const float SORT_PERCENTAGE[] = {0, 0.25, 0.50, 0.75, 0.95, 0.99, 0.997, 1}; //percantage of the table that is sorted
+    const float SORT_PERCENTAGE[] = {0, 0.25, 0.50, 0.75, 0.95, 0.99, 0.997, 1, 2}; //percantage of the table that is sorted
     
     for(int size : SIZES){
         for(float sort_percentage : SORT_PERCENTAGE){
             time_check(size, sort_percentage);
         }
     }
+
+    test_sorting_algorithm(heapsort, "Heapsort");
+    test_sorting_algorithm(introsort, "Introsort");
+    test_sorting_algorithm(timsort, "Timsort"); //testing algorytms
 
     return 0;
 }
